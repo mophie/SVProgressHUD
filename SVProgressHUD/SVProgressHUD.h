@@ -62,6 +62,11 @@ typedef NS_ENUM(NSUInteger, SVProgressHUDMaskType) {
 
 + (BOOL)isVisible;
 
+/**
+ Set this to add the progress hud view to the given view controller's view rather than UIWindow.
+ */
++ (void)setDefaultPresentingViewController:(UIViewController *)viewController;
+
 @end
 
 

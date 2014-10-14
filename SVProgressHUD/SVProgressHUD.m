@@ -53,6 +53,8 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
 @property (nonatomic, readonly) CGFloat visibleKeyboardHeight;
 @property (nonatomic, assign) UIOffset offsetFromCenter;
 
+@property (nonatomic, weak) UIViewController *defaultPresentingViewController;
+
 
 - (void)showProgress:(float)progress
               status:(NSString*)string
@@ -117,6 +119,10 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
 + (void)setErrorImage:(UIImage *)image {
     [self sharedView];
     SVProgressHUDErrorImage = image;
+}
+
++ (void)setDefaultPresentingViewController:(UIViewController *)rootViewController {
+    [self sharedView].defaultPresentingViewController = rootViewController;
 }
 
 #pragma mark - Show Methods
@@ -506,15 +512,24 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
 #pragma mark - Master show/dismiss methods
 
 - (void)showProgress:(float)progress status:(NSString*)string maskType:(SVProgressHUDMaskType)hudMaskType {
-    
-    if(!self.overlayView.superview){
-        NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication]windows]reverseObjectEnumerator];
+
+    if (!self.overlayView.superview) {
+
+        if (_defaultPresentingViewController) {
+
+            [_defaultPresentingViewController.view addSubview:self.overlayView];
+
+        } else {
+
+            NSEnumerator *frontToBackWindows = [[[UIApplication sharedApplication]windows]reverseObjectEnumerator];
         
-        for (UIWindow *window in frontToBackWindows)
-            if (window.windowLevel == UIWindowLevelNormal) {
-                [window addSubview:self.overlayView];
-                break;
+            for (UIWindow *window in frontToBackWindows) {
+                if (window.windowLevel == UIWindowLevelNormal) {
+                    [window addSubview:self.overlayView];
+                    break;
+                }
             }
+        }
     }
     
     if(!self.superview)
