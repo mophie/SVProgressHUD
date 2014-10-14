@@ -261,6 +261,10 @@ static const CGFloat SVProgressHUDParallaxDepthPoints = 10;
             
             break;
         }
+
+        default: {
+            break;
+        }
     }
 }
 
